@@ -1,7 +1,9 @@
 #import game modules
+from curses import KEY_LEFT, KEY_RIGHT, KEY_UP
 from glob import glob
+from this import d
 from time import time
-from turtle import pos
+from turtle import pos, up
 import pgzrun
 from random import randint
 
@@ -13,31 +15,27 @@ HEIGHT = 600
 #create variables
 score = 0
 game_over = False
+direction = 1 
 
 
 #create the actors and starting postitions
-player = Actor('player')
-player.pos = 100, 100
 
 coin = Actor('coin')
 coin.pos = 200, 200
 
-enemy = Actor('enemy')
-enemy.pos = 500, 500
-
 snake_head = Actor('snake_head')
 snake_head.pos = 160, 160
+snake_head.direction = 1
 
 snake_body = Actor('snake_body')
 snake_body.pos = 160, 200
 
 
+speed = 2 
 #draw the game
 def draw():
     screen.fill('black')
-    player.draw()
     coin.draw() 
-    enemy.draw()
     snake_head.draw()
     snake_body.draw()
 
@@ -59,63 +57,82 @@ def place_coin():
 def time_up():
     global game_over
     game_over = True
-    
 
+#checking for left and right
+def on_key_up(key, mod):
+    global direction
+    if key == keys.RIGHT:
+        snake_head.direction += 1
+        snake_head.angle -= 90
+
+    if key == keys.LEFT:
+        snake_head.direction -= 1    
+        snake_head.angle += 90
+
+    if snake_head.direction == 0:
+        snake_head.direction = 4
+    
+    if snake_head.direction == 5:
+        snake_head.direction = 1 
+
+#loops the actors
+def loop(actor):
+     if actor.x < 0:
+        actor.x = WIDTH
+
+     if actor.x > WIDTH:
+        actor.x = 0
+
+     if actor.y > HEIGHT:
+        actor.y = 0
+    
+     if actor.y < 0:
+        actor.y = HEIGHT
+ 
+#moving the actors
+def move_actor(actor):
+     if actor.direction == 1:
+        actor.y -= speed  
+
+     if actor.direction == 2:
+        actor.x += speed
+
+     if actor.direction == 3:
+        actor.y += speed
+
+     if actor.direction == 4:
+        actor.x -= speed
 
 #constantly updates the game
 def update(delta):
     global score
+    global direction
 
 
-    #checks if player colides with coin
+    #checks if snake colides with coin
     if snake_head.colliderect(coin):
         score += 10
         place_coin()
-
-    #checks if player colides with enemy
-    if snake_head.colliderect(enemy):
-        time_up()   
     
+    #move and loops the snake head
+    move_actor(snake_head)
 
-    #snake head movement
-    if keyboard.left:
-     snake_head.x -= 4
-
-    if snake_head.x < 0:
-     snake_head.x = WIDTH
-
-    if keyboard.right:
-     snake_head.x += 4
-
-    if snake_head.x > WIDTH:
-     snake_head.x = 0
-
-    if keyboard.up:
-     snake_head.y -= 4
-
-    if snake_head.y > HEIGHT:
-     snake_head.y = 0
-
-    if keyboard.down:
-     snake_head.y += 4
-    
-    if snake_head.y < 0:
-     snake_head.y = HEIGHT
-
-    #makes the enemy follow the player
+    loop(snake_head)
+    #makes the body follow the head
     if snake_body.x < snake_head.x:
-       snake_body.x +=4
+       snake_body.x += speed
 
     if snake_body.x > snake_head.x:
-       snake_body.x -=4
+       snake_body.x -= speed
 
     if snake_body.y < snake_head.y:
-       snake_body.y += 4
+       snake_body.y += speed
 
     if snake_body.y > snake_head.y:
-       snake_body.y -= 4
+       snake_body.y -= speed
 
 
+    loop(snake_body)
 
 #random placement of coin at start of game
 place_coin()
