@@ -5,6 +5,7 @@ from board import Board
 from dragger import Dragger
 from config import Config
 
+
 class Game:
 
     def __init__(self):
@@ -63,6 +64,7 @@ class Game:
         if self.board.last_move:
             initial = self.board.last_move.initial
             final = self.board.last_move.final
+            theme = self.config.theme
 
             for pos in [initial, final]:
                 # color 
@@ -91,3 +93,9 @@ class Game:
 
     def change_theme(self):
         self.config.change_theme()
+
+    def play_sound(self, captured=False):
+        if captured:
+            self.config.capture_sound.play()
+        else:
+            self.config.move_sound.play()
