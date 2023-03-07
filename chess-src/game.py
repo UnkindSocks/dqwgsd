@@ -65,8 +65,8 @@ class Game:
             final = self.board.last_move.final
 
             for pos in [initial, final]:
-                # color
-                color = (244, 247, 116) if (pos.row + pos.col) % 2 == 0 else(172, 195, 51)
+                # color 
+                color = theme.trace.light if (pos.row + pos.col) % 2 == 0 else theme.trace.dark
                 # rect      
                 rect = (pos.col * SQSIZE, pos.row * SQSIZE, SQSIZE, SQSIZE)
                 # blit
@@ -81,8 +81,6 @@ class Game:
              # blit
              pygame.draw.rect(surface, color, rect, width=3)
 
-
-
     # other methods
 
     def next_turn(self):
@@ -90,3 +88,6 @@ class Game:
 
     def set_hover(self, row, col):
         self.hovered_sqr = self.board.squares[row][col]
+
+    def change_theme(self):
+        self.config.change_theme()
