@@ -93,7 +93,7 @@ class Main:
 
                             board.move(dragger.piece, move)
                             # sounds
-                            game.play_sound(captured)cd def
+                            game.play_sound(captured)
                             # show methods
                             game.show_bg(screen)
                             game.show_last_move(screen)
@@ -109,6 +109,14 @@ class Main:
                     # changing themes
                     if event.key == pygame.K_t:
                         game.change_theme()
+
+                     # restart function
+                    if event.key == pygame.K_r:
+                        game.reset()
+                        game = self.game
+                        board = self.game.board
+                        dragger = self.game.dragger
+
 
                 # quit the application
                 elif event.type == pygame.QUIT:
